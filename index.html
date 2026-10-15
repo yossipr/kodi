@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kodi Repository File Index</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; background: #0f172a; color: #f8fafc; }
+    h1 { border-bottom: 2px solid #334155; padding-bottom: 10px; font-size: 1.5rem; }
+    ul { list-style-type: none; padding-left: 20px; }
+    li { margin: 8px 0; }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .folder { font-weight: bold; color: #facc15; }
+    .size { color: #94a3b8; font-size: 0.85rem; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Index of /kodi</h1>
+  <div id="file-tree">Loading repository contents...</div>
+
+  <script>
+    // Configured for yossipr/kodi
+    const REPO_OWNER = 'yossipr';
+    const REPO_NAME = 'kodi';
+    const BRANCH = 'main'; // Change to 'master' if your default branch is master
+
+    async function fetchContents(path = '') {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to load directory');
+      return await response.json();
+    }
+
+    async function buildTree(path = '', container) {
+      try {
+        const items = await fetchContents(path);
+        const ul = document.createElement('ul');
+
+        // Filter out index.html from showing in the listing if desired
+        for (const item of items) {
+          if (item.name === 'index.html' && path === '') continue;
+
+          const li = document.createElement('li');
+          if (item.type === 'dir') {
+            li.innerHTML = `<span class="folder">📁 ${item.name}/</span>`;
+            ul.appendChild(li);
+            await buildTree(item.path, li); // Recurse into subdirectories
+          } else {
+            const sizeKB = (item.size / 1024).toFixed(1);
+            li.innerHTML = `📄 <a href="${item.name === 'addons.xml' ? item.name : item.path}">${item.name}</a> <span class="size">(${sizeKB} KB)</span>`;
+            ul.appendChild(li);
+          }
+        }
+        container.appendChild(ul);
+      } catch (err) {
+        container.innerText = 'Error loading files.';
+      }
+    }
+
+    const treeContainer = document.getElementById('file-tree');
+    treeContainer.innerHTML = '';
+    buildTree('', treeContainer);
+  </script>
+</body>
+</html>

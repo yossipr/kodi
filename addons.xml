@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.myrepo" name="My Kodi Repository" version="1.0.0" provider-name="yossipr">
+  <extension point="xbmc.addon.repository" name="My Kodi Repository">
+    <dir>
+      <info compressed="false">https://yossipr.github.io/kodi/addons.xml</info>
+      <checksum>https://yossipr.github.io/kodi/addons.xml.md5</checksum>
+      <datadir zip="true">https://yossipr.github.io/kodi/zips/</datadir>
+    </dir>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>My Custom Kodi Repository</summary>
+    <description>Repository for my custom Kodi add-ons.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
